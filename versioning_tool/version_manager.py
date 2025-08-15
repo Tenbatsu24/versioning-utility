@@ -292,7 +292,14 @@ def main():
             update_pyproject_version(PYPROJECT_FILE, suggested)
 
             # Update changelog automatically for pre-release
-            subprocess.run(["python", "changelog_generator.py", suggested], check=True)
+            subprocess.run(
+                [
+                    "venv/bin/python",
+                    "versioning_tool/changelog_generator.py",
+                    suggested,
+                ],
+                check=True,
+            )
 
             warning_table = Table(show_header=False, box=None)
             warning_table.add_row("Branch:", branch)
@@ -332,7 +339,12 @@ def main():
                     f"Version bumped to {suggested}", "✅ Version Bumped", "green"
                 )
                 subprocess.run(
-                    ["python", "changelog_generator.py", suggested], check=True
+                    [
+                        "venv/bin/python",
+                        "versioning_tool/changelog_generator.py",
+                        suggested,
+                    ],
+                    check=True,
                 )
             else:
                 print_info_panel(
