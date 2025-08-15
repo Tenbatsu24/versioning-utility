@@ -252,7 +252,6 @@ def main():
 
     # load the versioning config\
     versioning_config = load_versioning_config(VERSIONING_CONFIG)
-    print(versioning_config)
     if not versioning_config:
         print_info_panel(
             "No versioning configuration found. Using default settings.",
