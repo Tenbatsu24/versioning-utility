@@ -22,3 +22,4 @@ repos:
         language: python
         types: [python]
         pass_filenames: false
+        stages: [pre-push]
