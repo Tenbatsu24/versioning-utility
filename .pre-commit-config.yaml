@@ -16,11 +16,10 @@ repos:
         entry: make format
         language: system
         pass_filenames: false
-      - id: auto-version-changelog
-        name: Auto Version & Changelog
-        entry: version-manager
+      - id: version-check
+        name: Version check (no writes)
+        entry: version-manager check
         language: python
-        types: [python]
         pass_filenames: false
         always_run: true
-        stages: [pre-push]
+        stages: [ pre-push ]

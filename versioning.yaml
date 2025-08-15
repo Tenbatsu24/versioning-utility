@@ -1,5 +1,52 @@
 default_branch: main
-pre_release_branches:
-  feature/*: alpha
-  beta/*: beta
-  rc/*: rc
+
+# Branch behavior & pre-release labeling
+branch_types:
+  feature/*:
+    prerelease: alpha
+    bump: minor          # when merged to main, default bump if only feats
+  beta/*:
+    prerelease: beta
+  rc/*:
+    prerelease: rc
+  hotfix/*:
+    bump: patch          # stable patch, no prerelease
+
+# Ignore changes that should NOT trigger version bumps
+ignore:
+  files:
+    - "*.md"
+    - "docs/**"
+    - ".github/**"
+  commits:
+    - "^chore(\\(.+\\))?:"
+    - "^docs(\\(.+\\))?:"
+
+# Conventional commit -> bump precedence on main
+# Highest match wins over lower ones, unless overridden by branch_types.hotfix/*
+conventional_bump:
+  major:
+    - "BREAKING CHANGE"
+    - "^feat!:"          # feat! is breaking
+  minor:
+    - "^feat:"           # non-breaking feature
+  patch:
+    - "^fix:"
+    - "^perf:"
+    - "^refactor:"
+    - "^build:"
+    - "^ci:"
+
+# Changelog (only on main)
+changelog:
+  main_only: true
+  template: "CHANGELOG.md.j2"
+  header: "Changelog"
+  include_commits_from_branches: true  # still summarize but write only when on main
+  group_order: ["⚠️ Breaking Changes", "✨ Features", "🐛 Fixes", "🧰 Other"]
+
+# Mermaid graph for README (main only)
+graph:
+  readme_file: "README.md"
+  start_after_heading: "## Release Graph"
+  max_tags: 12

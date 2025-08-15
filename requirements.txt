@@ -8,3 +8,4 @@ packaging
 pre-commit
 build
 twine
+jinja2

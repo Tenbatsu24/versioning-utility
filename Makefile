@@ -9,6 +9,37 @@ PYTHON_INTERPRETER := python3
 # COMMANDS                                                                      #
 #################################################################################
 
+## This target checks the current version of the project using version-manager.
+.PHONY: check
+check:
+	@version-manager check
+
+## This target bumps the version of the project using version-manager.
+.PHONY: bump
+bump:
+	@version-manager bump
+
+## This target generates a changelog based on the version history.
+.PHONY: changelog
+changelog:
+	@version-manager changelog
+
+## This target generates a graph of the version history.
+.PHONY: graph
+graph:
+	@version-manager graph
+
+## Example: CI job on main that bumps, changelog, and graph non-interactively
+.PHONY: release
+release:
+	@version-manager bump -y
+	version=$$(grep -E '^version\s*=' pyproject.toml | head -1 | cut -d '"' -f2); \
+	if git rev-parse "v$$version" >/dev/null 2>&1; then \
+		echo "Tag v$$version already exists! Aborting."; \
+		exit 1; \
+	fi; \
+	git tag "v$$version" && git push --tags
+
 
 ## Install Python Dependencies
 .PHONY: requirements
@@ -94,9 +125,7 @@ setup_hooks:
 	fi
 
 
-# This target creates the virtual environment, activates it, installs requirements, and sets up pre-commit hooks.
-# It is a convenience target that combines several steps into one.
-# It ensures that the environment is ready for development.
+## This target creates the virtual environment, activates it, installs requirements, and sets up pre-commit hooks.
 .PHONY: env
 env: create_environment activate_environment setup_hooks
 

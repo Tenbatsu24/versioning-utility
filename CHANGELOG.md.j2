@@ -1,0 +1,16 @@
+# {{ header }}
+
+{% for release in releases %}
+## {{ release.version }} — {{ release.date }}
+{% if release.sections %}
+{% for title, items in release.sections %}
+### {{ title }}
+{% for line in items %}
+- {{ line }}
+{% endfor %}
+{% endfor %}
+{% else %}
+_No notable changes._
+{% endif %}
+
+{% endfor %}
