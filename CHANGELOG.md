@@ -2,6 +2,8 @@
 
 ### feature/build
 #### 🐛 Fixes
+- remove: dangling print statement
+- add: changelog.md
 - fix: changelog generator
 - add: always run version-manager
 - add: twine and build for pypi project

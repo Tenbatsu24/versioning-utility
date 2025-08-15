@@ -6,7 +6,7 @@ from collections import defaultdict
 from rich.panel import Panel
 from rich.console import Console
 
-from .config import CHANGELOG_FILE
+from versioning_tool.config import CHANGELOG_FILE
 
 console = Console()
 
