@@ -18,7 +18,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from versioning_tool.config import PYPROJECT_FILE
+from versioning_tool.config import PYPROJECT_FILE, VERSIONING_CONFIG
 
 console = Console()
 
@@ -29,7 +29,23 @@ def print_info_panel(message: str, title: str = "ℹ️ Info", border_style: str
 
 def load_versioning_config(path: Path):
     if not path.exists():
+        console.print(
+            Panel(
+                f"Versioning configuration file {path} not found. Using default settings.",
+                title="⚠️ Warning",
+                border_style="yellow",
+                expand=False,
+            )
+        )
         return {}
+    console.print(
+        Panel(
+            f"Loading versioning configuration from {path}",
+            title="ℹ️ Loading Config",
+            border_style="blue",
+            expand=False,
+        )
+    )
     with path.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
@@ -234,15 +250,39 @@ def main():
         print_info_panel("Could not read main branch version.", "❌ Error", "red")
         sys.exit(1)
 
-    # Determine pre-release type
-    if branch.startswith("feature/"):
-        pre_release = "alpha"
-    elif branch.startswith("beta/"):
-        pre_release = "beta"
-    elif branch.startswith("rc/"):
-        pre_release = "rc"
+    # load the versioning config\
+    versioning_config = load_versioning_config(VERSIONING_CONFIG)
+    print(versioning_config)
+    if not versioning_config:
+        print_info_panel(
+            "No versioning configuration found. Using default settings.",
+            "ℹ️ Info",
+            "blue",
+        )
+        versioning_config = {
+            "default_branch": "main",
+            "pre_release_branches": {
+                "feature/*": "alpha",
+                "beta/*": "beta",
+                "rc/*": "rc",
+            },
+        }
+
+    pre_release = get_pre_release_for_branch(
+        branch, versioning_config.get("pre_release_branches", {})
+    )
+    if pre_release:
+        print_info_panel(
+            f"Detected pre-release type: {pre_release}",
+            "ℹ️ Pre-release Type",
+            "blue",
+        )
     else:
-        pre_release = None
+        print_info_panel(
+            "No pre-release type detected. Assuming stable release.",
+            "ℹ️ Stable Release",
+            "blue",
+        )
 
     # Compute suggested version
     if pre_release:
