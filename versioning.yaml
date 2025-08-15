@@ -1,0 +1,5 @@
+default_branch: main
+pre_release_branches:
+  feature/*: alpha
+  beta/*: beta
+  rc/*: rc

@@ -1,0 +1,8 @@
+make
+black
+flake8
+dotenv
+rich
+pyyaml
+packaging
+pre-commit
