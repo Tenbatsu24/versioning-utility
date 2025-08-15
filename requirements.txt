@@ -6,3 +6,5 @@ rich
 pyyaml
 packaging
 pre-commit
+build
+twine
