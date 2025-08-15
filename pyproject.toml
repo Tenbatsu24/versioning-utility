@@ -28,9 +28,8 @@ exclude = ["venv", "build", "dist", ".git", "__pycache__"]
 [tool.black]
 line-length = 100
 
-# setup entry points for the CLI
 [project.scripts]
-version-manager = "versioning_tool.cli:main"
+version-manager = "versioning_tool.version_manager:main"
 
 [tool.setuptools]
 packages = ["versioning_tool"]
