@@ -68,15 +68,23 @@ def decide_bump(branch: str, msgs: List[str], cfg: dict) -> BumpDecision:
 
 def next_version(current: str, decision: BumpDecision) -> str:
     v = Version(current)
+
+    # --- CASE 1: branch wants a prerelease (feature/* etc.) ---
     if decision.prerelease:
         label = decision.prerelease
-        # if already on same prerelease channel -> increment number
+        # If already on same prerelease channel -> increment number
         if v.pre and v.pre[0] == label:
             num = v.pre[1] + 1
             return f"{v.major}.{v.minor}.{v.micro}-{label}.{num}"
-        # reset to .1 from baseline (same major/minor/patch)
+        # Reset to .1 from baseline (same major/minor/patch)
         return f"{v.major}.{v.minor}.{v.micro}-{label}.1"
 
+    # --- CASE 2: current version is prerelease, but decision does NOT ask for one ---
+    if v.pre:
+        # Promote prerelease to stable (drop suffix)
+        return f"{v.major}.{v.minor}.{v.micro}"
+
+    # --- CASE 3: normal bump rules ---
     bump = decision.bump or "patch"
     if bump == "major":
         return f"{v.major + 1}.0.0"
