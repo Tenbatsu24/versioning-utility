@@ -211,3 +211,23 @@ This ensures every version bump includes a clear summary of changes.
 * Branch summaries help track which branch introduced which changes, useful for larger projects or multiple contributors.
 
 ---
+## ## Release Graph
+
+```mermaid
+gitGraph
+
+commit id: "root"
+commit id: "9da7907"
+commit id: "aaa137c"
+commit id: "68c6cae"
+commit id: "74581b4"
+commit id: "0cbd436"
+commit id: "e9db38a"
+commit id: "977c337"
+commit id: "c5c838a"
+commit id: "b14f309"
+commit id: "54f5071"
+commit id: "dc49eb2"
+commit id: "225e34d"
+commit id: "77ceb4f"
+```
