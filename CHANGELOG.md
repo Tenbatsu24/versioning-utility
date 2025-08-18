@@ -1,6 +1,16 @@
 # Changelog
 
 
+## 0.3.0 — 2025-08-19
+
+
+### 🧰 Other
+
+- Bump version
+
+# Changelog
+
+
 ## 0.2.1 — 2025-08-18
 
 

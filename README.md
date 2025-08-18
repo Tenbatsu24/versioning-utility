@@ -215,19 +215,30 @@ This ensures every version bump includes a clear summary of changes.
 
 ```mermaid
 gitGraph
-
-commit id: "root"
-commit id: "9da7907"
-commit id: "aaa137c"
-commit id: "68c6cae"
-commit id: "74581b4"
-commit id: "0cbd436"
-commit id: "e9db38a"
-commit id: "977c337"
-commit id: "c5c838a"
-commit id: "b14f309"
-commit id: "54f5071"
-commit id: "dc49eb2"
-commit id: "225e34d"
-commit id: "77ceb4f"
+    commit id: "root"
+    commit id: "9da7907 Initial Commit"
+    commit id: "aaa137c add: versioning tool"
+    commit id: "68c6cae add: versioning tool"
+    commit id: "74581b4 add: build requirements"
+    commit id: "0cbd436 add: twine and build for pypi pr…"
+    commit id: "e9db38a add: always run version-manager"
+    commit id: "977c337 fix: changelog generator"
+    commit id: "c5c838a add: changelog.md"
+    commit id: "b14f309 remove: dangling print statement"
+    branch feature/build
+    commit id: "54f5071 change: relative imports"
+    commit id: "dc49eb2 add: overhaul"
+    commit id: "225e34d add: overhaul"
+    branch feature/overhaul
+    commit id: "77ceb4f add: overhaul" tag: "v0.2.1"
+    commit id: "e645075 add: release 0.2.1"
+    commit id: "86ceabd add: release 0.2.1"
+    commit id: "9d0bfbd change: better changelog and rel…" tag: "v0.2.1-alpha.1"
+    branch feature/better-changelog
+    commit id: "81608b4 change: version bump"
+    commit id: "c1786fd fix: bump logic"
+    commit id: "8ccd66f fix: pre-release to stable logic"
+    commit id: "c09db61 feat:bump logic" tag: "v0.3.0"
+    branch fix/bump-logic
+    commit id: "91cd390 change: bump version"
 ```
