@@ -12,18 +12,66 @@ def recent_tag_chain(main_branch: str, max_tags: int) -> list[str]:
     return tags[:max_tags]
 
 
-def graph_for_main(main_branch: str = "main", max_tags: int = 12) -> str:
-    # We’ll produce a linear graph of tags on main for simplicity and clarity
-    commits = run_git(["rev-list", "--first-parent", f"{main_branch}"]).splitlines()
-    tags = {t: run_git(["rev-list", "-n", "1", t]) for t in recent_tag_chain(main_branch, max_tags)}
-    lines = [MERMAID_HEADER, 'commit id: "root"']
+def _short_msg(msg: str, length: int = 32) -> str:
+    """Return a commit message truncated to length."""
+    clean = msg.strip().replace('"', "'")  # avoid breaking mermaid strings
+    return (clean[:length] + "…") if len(clean) > length else clean
 
-    for c in reversed(commits):  # oldest -> newest
-        line = f'commit id: "{c[:7]}"'
-        tag = next((t for t, sha in tags.items() if sha == c), None)
-        if tag:
-            line += f' tag: "{tag}"'
-        lines.append(line)
+
+def graph_for_main(main_branch: str = "main", max_tags: int = 12) -> str:
+    """Produce a mermaid gitGraph with SHA + short commit message, branches, merges, and tags."""
+
+    log = run_git(
+        [
+            "log",
+            "--all",
+            "--decorate=short",
+            "--pretty=format:%h|%d|%s|%p",
+            "--topo-order",
+            "--reverse",
+        ]
+    ).splitlines()
+
+    lines = ["```mermaid", "gitGraph", '    commit id: "root"']
+
+    branches = {main_branch: None}
+    current_branch = main_branch
+
+    for entry in log:
+        sha, deco, msg, parents = entry.split("|", 3)
+        deco = deco.strip(" ()")
+        parents = parents.split() if parents else []
+
+        # Commit id with SHA + 32-char truncated message
+        commit_text = f"{sha} {_short_msg(msg)}"
+        commit_line = f'    commit id: "{commit_text}"'
+
+        # Tags
+        tags = [d for d in deco.split(", ") if d.startswith("tag:")]
+        for t in tags:
+            commit_line += f' tag: "{t.replace("tag: ", "")}"'
+
+        # Branch names (skip HEAD ->, strip origin/)
+        branch_names = [
+            d.replace("origin/", "")
+            for d in deco.split(", ")
+            if d and not d.startswith("tag:") and not d.startswith("HEAD ->")
+        ]
+        for b in branch_names:
+            if b not in branches:
+                lines.append(f"    branch {b}")
+                branches[b] = sha
+                current_branch = b
+
+        # Merges
+        if len(parents) > 1:
+            for parent in parents[1:]:
+                parent_branch = next((b for b, h in branches.items() if h == parent), None)
+                if parent_branch:
+                    commit_line = f"    merge {parent_branch}"
+
+        lines.append(commit_line)
+        branches[current_branch] = sha
 
     lines.append("```")
     return "\n".join(lines)
