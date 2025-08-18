@@ -82,6 +82,13 @@ def compute_decision(cfg: dict, base_branch: str, head: str) -> tuple[str, str, 
         if not decision.prerelease and decision.bump is None:
             # No changes requiring bumps
             return current_ver, "only ignored changes", "none"
+        else:
+            suggested = next_version(current_ver, decision)
+            return (
+                suggested,
+                decision.reason,
+                decision.bump or ("prerelease" if decision.prerelease else "patch"),
+            )
 
     decision = decide_bump(branch, msgs_kept, cfg, current_version=current_ver)
     suggested = next_version(current_ver, decision)

@@ -8,12 +8,12 @@ from typing import Dict, List, Optional, Tuple
 
 from packaging.version import Version
 
-BUMP_ORDER = ["patch", "minor", "major"]  # ascending
+BUMP_ORDER = ["promote, " "patch", "minor", "major"]  # ascending
 
 
 @dataclass
 class BumpDecision:
-    bump: Optional[str]  # patch/minor/major or None
+    bump: Optional[str]  # promote/patch/minor/major or None
     prerelease: Optional[str]
     reason: str
 
@@ -30,7 +30,7 @@ def conventional_commit_bump(msgs: List[str], bump_cfg: dict) -> Optional[str]:
     Returns highest bump suggested by commit messages.
     """
     matched = set()
-    for level in ["major", "minor", "patch"]:
+    for level in ["major", "minor", "patch", "promote"]:
         rules: List[str] = bump_cfg.get(level, [])
         regexes = [re.compile(r) for r in rules]
         if any(any(r.search(m) for r in regexes) for m in msgs):
@@ -66,7 +66,7 @@ def decide_bump(
         if v.pre:
             # override: strip prerelease, force stable promotion
             return BumpDecision(
-                bump=None,
+                bump="promote",
                 prerelease=None,
                 reason=f"promote prerelease {current_version} → stable on {branch}",
             )
@@ -98,6 +98,11 @@ def next_version(current: str, decision: BumpDecision) -> str:
         return f"{v.major}.{v.minor + 1}.0"
     if bump == "patch":
         return f"{v.major}.{v.minor}.{v.micro + 1}"
+    if bump == "promote":
+        # promote prerelease to stable → strip prerelease
+        if v.pre:
+            return f"{v.major}.{v.minor}.{v.micro}"
+        # if no prerelease, just return current version
+        return current
 
-    # if bump=None (promotion case) → just strip prerelease
     return f"{v.major}.{v.minor}.{v.micro}"
