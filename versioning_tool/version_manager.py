@@ -78,12 +78,12 @@ def compute_decision(cfg: dict, base_branch: str, head: str) -> tuple[str, str, 
 
     # If *only* ignored files changed, force no bump unless branch enforces prerelease
     if files_kept == [] and msgs_kept == []:
-        decision = decide_bump(branch, [], cfg)
-        if not decision.prerelease:
+        decision = decide_bump(branch, [], cfg, current_version=current_ver)
+        if not decision.prerelease and decision.bump is None:
             # No changes requiring bumps
             return current_ver, "only ignored changes", "none"
 
-    decision = decide_bump(branch, msgs_kept, cfg)
+    decision = decide_bump(branch, msgs_kept, cfg, current_version=current_ver)
     suggested = next_version(current_ver, decision)
     return (
         suggested,

@@ -42,7 +42,9 @@ def conventional_commit_bump(msgs: List[str], bump_cfg: dict) -> Optional[str]:
     return highest
 
 
-def decide_bump(branch: str, msgs: List[str], cfg: dict) -> BumpDecision:
+def decide_bump(
+    branch: str, msgs: List[str], cfg: dict, current_version: str | None = None
+) -> BumpDecision:
     # Branch-specific overrides (hotfix/* etc.)
     br = branch_match(branch, cfg.get("branch_types", {}))
     prerelease = None
@@ -58,6 +60,17 @@ def decide_bump(branch: str, msgs: List[str], cfg: dict) -> BumpDecision:
     # If branch forces bump (e.g., hotfix/*), that wins for stable release scenario
     bump = branch_forced_bump or conv
 
+    # --- NEW LOGIC: promote prereleases on main ---
+    if branch == cfg.get("default_branch", "main") and current_version:
+        v = Version(current_version)
+        if v.pre:
+            # override: strip prerelease, force stable promotion
+            return BumpDecision(
+                bump=None,
+                prerelease=None,
+                reason=f"promote prerelease {current_version} → stable on {branch}",
+            )
+
     # If branch suggests prerelease (feature/* => alpha), we’ll output prerelease label
     return BumpDecision(
         bump=bump,
@@ -68,26 +81,23 @@ def decide_bump(branch: str, msgs: List[str], cfg: dict) -> BumpDecision:
 
 def next_version(current: str, decision: BumpDecision) -> str:
     v = Version(current)
-
-    # --- CASE 1: branch wants a prerelease (feature/* etc.) ---
     if decision.prerelease:
         label = decision.prerelease
-        # If already on same prerelease channel -> increment number
+        # if already on same prerelease channel -> increment number
         if v.pre and v.pre[0] == label:
             num = v.pre[1] + 1
             return f"{v.major}.{v.minor}.{v.micro}-{label}.{num}"
-        # Reset to .1 from baseline (same major/minor/patch)
+        # reset to .1 from baseline (same major/minor/patch)
         return f"{v.major}.{v.minor}.{v.micro}-{label}.1"
 
-    # --- CASE 2: current version is prerelease, but decision does NOT ask for one ---
-    if v.pre:
-        # Promote prerelease to stable (drop suffix)
-        return f"{v.major}.{v.minor}.{v.micro}"
-
-    # --- CASE 3: normal bump rules ---
+    # stable release path
     bump = decision.bump or "patch"
     if bump == "major":
         return f"{v.major + 1}.0.0"
     if bump == "minor":
         return f"{v.major}.{v.minor + 1}.0"
-    return f"{v.major}.{v.minor}.{v.micro + 1}"
+    if bump == "patch":
+        return f"{v.major}.{v.minor}.{v.micro + 1}"
+
+    # if bump=None (promotion case) → just strip prerelease
+    return f"{v.major}.{v.minor}.{v.micro}"
