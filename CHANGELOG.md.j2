@@ -1,16 +1,39 @@
 # {{ header }}
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 {% for release in releases %}
-## {{ release.version }} — {{ release.date }}
+## [{{ release.version }}] - {{ release.date }}
+
 {% if release.sections %}
 {% for title, items in release.sections %}
 ### {{ title }}
 {% for line in items %}
 - {{ line }}
 {% endfor %}
+{% if not loop.last %}
+
+{% endif %}
 {% endfor %}
 {% else %}
-_No notable changes._
+### No notable changes
 {% endif %}
 
+{% if release.contributors %}
+### Contributors
+{% for contributor in release.contributors %}
+- {{ contributor }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+<!-- Release links -->
+{% for release in releases %}
+{% if release.previous_version != 'initial' and repo_url %}
+[{{ release.version }}]: {{ repo_url }}/compare/v{{ release.previous_version }}...v{{ release.version }}
+{% endif %}
 {% endfor %}

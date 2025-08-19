@@ -3,18 +3,42 @@ from __future__ import annotations
 from pathlib import Path
 from versioning_tool.core import run_git
 
-MERMAID_HEADER = "```mermaid\ngitGraph\n"
+
+def generate_release_graph(main_branch: str = "main", max_releases: int = 10) -> str:
+    """Generate a simplified release-focused graph"""
+
+    # Get recent tags in chronological order
+    tags = run_git(["tag", "--merged", main_branch, "--sort=-creatordate"]).splitlines()[
+        :max_releases
+    ]
+
+    if not tags:
+        return "```mermaid\ngitGraph\n    commit\n```"
+
+    # Get commit info for each tag
+    graph_lines = ["```mermaid", "gitGraph"]
+
+    for i, tag in enumerate(tags):
+        # Get commit message for the tag
+        commit_msg = run_git(["log", "-1", "--pretty=format:%s", tag])
+        short_msg = _short_msg(commit_msg, 25)
+
+        if i == 0:
+            graph_lines.append(f'    commit id: "v{tag} {short_msg}" tag: "{tag}"')
+        else:
+            graph_lines.append(f"    branch release-{tag}")
+            graph_lines.append(f"    checkout release-{tag}")
+            graph_lines.append(f'    commit id: "v{tag} {short_msg}" tag: "{tag}"')
+            graph_lines.append("    checkout main")
+            graph_lines.append(f"    merge release-{tag}")
+
+    graph_lines.append("```")
+    return "\n".join(graph_lines)
 
 
-def recent_tag_chain(main_branch: str, max_tags: int) -> list[str]:
-    # tags reachable from main, sorted by taggerdate descending
-    tags = run_git(["tag", "--merged", main_branch, "--sort=-taggerdate"]).splitlines()
-    return tags[:max_tags]
-
-
-def _short_msg(msg: str, length: int = 32) -> str:
+def _short_msg(msg: str, length: int = 30) -> str:
     """Return a commit message truncated to length."""
-    clean = msg.strip().replace('"', "'")  # avoid breaking mermaid strings
+    clean = msg.strip().replace('"', "'")
     return (clean[:length] + "…") if len(clean) > length else clean
 
 

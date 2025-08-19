@@ -1,6 +1,13 @@
 # Python Versioning and Changelog Utility
 
-This repository includes a pre-push hook utility to ensure your Python package version is **properly bumped** before pushing to `main` or other important branches. It supports **feature, beta, and release candidate (RC) branches**, handles pre-release versions automatically, and can optionally use [Rich](https://github.com/willmcgugan/rich) for beautiful console output.
+
+[![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Semantic Versioning](https://img.shields.io/badge/semantic%20versioning-2.0.0-green.svg)](https://semver.org/)
+[![Conventional Commits](https://img.shields.io/badge/conventional%20commits-1.0.0-lightgrey.svg)](https://www.conventionalcommits.org/)
+
+This repository includes a pre-push hook utility to ensure your Python package version is **properly bumped** before pushing to `main` or other important branches.
 Having generated the version bump, it will also generate a changelog entry in `CHANGELOG.md` with the current date and the new version.
 
 ---
@@ -109,27 +116,7 @@ feature/* (alpha) → beta/* (beta) → rc/* (rc) → main (final release)
 
 ## Usage
 
-1. Install pre-commit and add the following to `.pre-commit-config.yaml`:
-```yaml
-- repo: local
-  hooks:
-    - id: black
-      name: black
-      language: system
-      entry: make format
-      pass_filenames: false
-    - id: check-version
-      name: Ensure Python package version is bumped
-      language: system
-      entry: python version_check.py
-      pass_filenames: false
-      stages: [pre-push]
-```
-2. Push changes; the pre-push hook will automatically:
-* Check that the version is bumped on `main`.
-* Auto-bump pre-release versions on feature, beta, or RC branches.
-* Display a warning panel if the version is not updated.
-
+* [Usage instructions](USAGE.md) for the versioning tool and changelog generation.
 ---
 
 ## Tips
@@ -141,65 +128,11 @@ feature/* (alpha) → beta/* (beta) → rc/* (rc) → main (final release)
 * The utility can **auto-bump versions**, but manual bumps are allowed for final releases.
 
 ---
+## Release Workflow
 
-Here’s a complete **README section** for your changelog generation, including instructions and examples:
-
+This section outlines the release workflow using the versioning tool and changelog generator.
+* [Release Workflow](RELEASE_WORKFLOW.md) for detailed steps on releasing new versions.
 ---
-
-## 📄 Changelog Generation
-
-We automatically maintain a structured `CHANGELOG.md` using **conventional commits** and Git history. The changelog groups changes by branch and type (features, fixes, breaking changes), and is updated whenever a new version is released.
-
-### How it works
-
-1. The `changelog_generator.py` script reads all commits since the last git tag.
-2. Commits are grouped by branch.
-3. Commits are categorized:
-
-   * **Breaking changes**: commits starting with `BREAKING CHANGE:` or `feat!:`.
-   * **Features**: commits starting with `feat:`.
-   * **Fixes**: commits starting with `fix:`.
-   * Others are grouped as fixes/miscellaneous.
-4. The changelog is appended to `CHANGELOG.md` with the new version number.
-
-### Usage
-
-Run the script after bumping your version:
-
-```bash
-python changelog_generator.py <new_version>
-```
-
-Example:
-
-```bash
-python changelog_generator.py 1.2.0
-```
-
-This will generate entries like:
-
-```
-# Changelog for version 1.2.0
-
-### feature/add-bird-photos
-#### ✨ Features
-- feat: add photo upload for birds
-- feat: display bird photos in diary
-
-### feature/track-migration
-#### ✨ Features
-- feat: track bird migration patterns
-#### 🐛 Fixes
-- fix: correct migration date calculation
-```
-
-### Integration with Version Bumping
-
-When you bump a version via `version_check.py`, the changelog script is automatically run:
-
-```python
-subprocess.run(["python", "changelog_generator.py", suggested_version], check=True)
-```
 
 This ensures every version bump includes a clear summary of changes.
 
@@ -209,36 +142,3 @@ This ensures every version bump includes a clear summary of changes.
 * Use feature branches (`feature/`) to keep changes organized.
 * Use pre-release branches (`beta/`, `rc/`) to test changes before merging into `main`.
 * Branch summaries help track which branch introduced which changes, useful for larger projects or multiple contributors.
-
----
-## ## Release Graph
-
-```mermaid
-gitGraph
-    commit id: "root"
-    commit id: "9da7907 Initial Commit"
-    commit id: "aaa137c add: versioning tool"
-    commit id: "68c6cae add: versioning tool"
-    commit id: "74581b4 add: build requirements"
-    commit id: "0cbd436 add: twine and build for pypi pr…"
-    commit id: "e9db38a add: always run version-manager"
-    commit id: "977c337 fix: changelog generator"
-    commit id: "c5c838a add: changelog.md"
-    commit id: "b14f309 remove: dangling print statement"
-    branch feature/build
-    commit id: "54f5071 change: relative imports"
-    commit id: "dc49eb2 add: overhaul"
-    commit id: "225e34d add: overhaul"
-    branch feature/overhaul
-    commit id: "77ceb4f add: overhaul" tag: "v0.2.1"
-    commit id: "e645075 add: release 0.2.1"
-    commit id: "86ceabd add: release 0.2.1"
-    commit id: "9d0bfbd change: better changelog and rel…" tag: "v0.2.1-alpha.1"
-    branch feature/better-changelog
-    commit id: "81608b4 change: version bump"
-    commit id: "c1786fd fix: bump logic"
-    commit id: "8ccd66f fix: pre-release to stable logic"
-    commit id: "c09db61 feat:bump logic" tag: "v0.3.0"
-    branch fix/bump-logic
-    commit id: "91cd390 change: bump version"
-```
