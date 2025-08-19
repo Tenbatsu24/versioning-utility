@@ -129,13 +129,14 @@ def cmd_bump(args):
     if current_branch() == base and cfg.get("changelog", {}).get("main_only", True):
         write_changelog(suggested, cfg, PROJ_ROOT)
         print("Changelog updated.")
-        gcfg = cfg.get("graph", {})
-        g = graph_for_main(base, gcfg.get("max_tags", 12))
-        write_graph_to_readme(
-            PROJ_ROOT / gcfg.get("readme_file", "README.md"),
-            gcfg.get("start_after_heading", "Release Graph"),
-            g,
-        )
+
+        # gcfg = cfg.get("graph", {})
+        # g = graph_for_main(base, gcfg.get("max_tags", 12))
+        # write_graph_to_readme(
+        #     PROJ_ROOT / gcfg.get("readme_file", "README.md"),
+        #     gcfg.get("start_after_heading", "Release Graph"),
+        #     g,
+        # )
         print("README release graph updated.")
 
 
@@ -155,7 +156,11 @@ def cmd_graph(args):
     cfg = load_cfg(VERSIONING_CONFIG)
     base = cfg.get("default_branch", "main")
     gcfg = cfg.get("graph", {})
-    g = graph_for_main(base, gcfg.get("max_tags", 12))
+
+    # Get graph type from args or config
+    graph_type = getattr(args, "type", gcfg.get("type", "release"))
+
+    g = graph_for_main(base, gcfg.get("max_tags", 12), graph_type)
     write_graph_to_readme(
         PROJ_ROOT / gcfg.get("readme_file", "README.md"),
         gcfg.get("start_after_heading", "Release Graph"),
@@ -182,9 +187,14 @@ def main():
         "changelog", help="Regenerate changelog for current version on main"
     ).set_defaults(func=cmd_changelog)
 
-    sub.add_parser("graph", help="Regenerate Mermaid gitGraph section in README").set_defaults(
-        func=cmd_graph
+    g = sub.add_parser("graph", help="Regenerate Mermaid gitGraph section in README")
+    g.add_argument(
+        "--type",
+        choices=["release", "simple", "detailed"],
+        default="release",
+        help="Type of graph to generate",
     )
+    g.set_defaults(func=cmd_graph)
 
     args = p.parse_args()
     args.func(args)

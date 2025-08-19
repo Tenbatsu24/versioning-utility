@@ -87,10 +87,21 @@ python -m versioning_tool.version_manager changelog
 
 Updates the Mermaid gitGraph section in the README.
 
+# Generate release-focused graph (default)
 ```bash
 python -m versioning_tool.version_manager graph
 ```
 
+# Generate simple linear graph
+
+```bash
+python -m versioning_tool.version_manager graph --type simple
+```
+
+# Generate detailed development graph
+```bash
+python -m versioning_tool.version_manager graph --type detailed
+```
 **Note:** Only works on main branch as configured
 
 ## ⚙️ Configuration
