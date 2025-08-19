@@ -8,12 +8,12 @@ from typing import Dict, List, Optional, Tuple
 
 from packaging.version import Version
 
-BUMP_ORDER = ["promote, " "patch", "minor", "major"]  # ascending
+BUMP_ORDER = ["patch", "minor", "major"]  # ascending
 
 
 @dataclass
 class BumpDecision:
-    bump: Optional[str]  # promote/patch/minor/major or None
+    bump: Optional[str]  # patch/minor/major or None
     prerelease: Optional[str]
     reason: str
 
@@ -30,7 +30,7 @@ def conventional_commit_bump(msgs: List[str], bump_cfg: dict) -> Optional[str]:
     Returns highest bump suggested by commit messages.
     """
     matched = set()
-    for level in ["major", "minor", "patch", "promote"]:
+    for level in ["major", "minor", "patch"]:
         rules: List[str] = bump_cfg.get(level, [])
         regexes = [re.compile(r) for r in rules]
         if any(any(r.search(m) for r in regexes) for m in msgs):
@@ -60,17 +60,6 @@ def decide_bump(
     # If branch forces bump (e.g., hotfix/*), that wins for stable release scenario
     bump = branch_forced_bump or conv
 
-    # --- NEW LOGIC: promote prereleases on main ---
-    if branch == cfg.get("default_branch", "main") and current_version:
-        v = Version(current_version)
-        if v.pre:
-            # override: strip prerelease, force stable promotion
-            return BumpDecision(
-                bump="promote",
-                prerelease=None,
-                reason=f"promote prerelease {current_version} → stable on {branch}",
-            )
-
     # If branch suggests prerelease (feature/* => alpha), we’ll output prerelease label
     return BumpDecision(
         bump=bump,
@@ -98,11 +87,5 @@ def next_version(current: str, decision: BumpDecision) -> str:
         return f"{v.major}.{v.minor + 1}.0"
     if bump == "patch":
         return f"{v.major}.{v.minor}.{v.micro + 1}"
-    if bump == "promote":
-        # promote prerelease to stable → strip prerelease
-        if v.pre:
-            return f"{v.major}.{v.minor}.{v.micro}"
-        # if no prerelease, just return current version
-        return current
 
     return f"{v.major}.{v.minor}.{v.micro}"
