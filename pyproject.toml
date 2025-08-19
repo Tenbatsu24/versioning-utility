@@ -1,6 +1,6 @@
 [project]
 name = "versioning-tool"
-version = "0.3.0"
+version = "0.3.1"
 description = "Automatic versioning and changelog generation utility."
 readme = "README.md"
 requires-python = ">=3.11"
