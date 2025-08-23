@@ -1,7 +1,7 @@
 # Python Versioning and Changelog Utility
 
 
-[![PyPI version](https://img.shields.io/pypi/v/semantic-version-utility.svg)](https://pypi.org/project/semantic-version-utility/)
+[![PyPI version](https://img.shields.io/pypi/v/semantic-versioning-utility.svg)](https://pypi.org/project/semantic-versioning-utility/)
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Pre-commit Hooks](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://pre-commit.com/)
