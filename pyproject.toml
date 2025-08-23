@@ -1,5 +1,5 @@
 [project]
-name = "versioning-tool"
+name = "vutil"
 version = "0.3.2"
 description = "Automatic versioning and changelog generation utility."
 readme = "README.md"
@@ -15,8 +15,6 @@ classifiers = [
     "Operating System :: OS Independent"
 ]
 dependencies = [
-    "rich>=13.0",
-    "packaging>=23.0",
     "pyyaml>=6.0",
     "jinja2>=3.1"
 ]
@@ -29,7 +27,7 @@ exclude = ["venv", "build", "dist", ".git", "__pycache__"]
 line-length = 100
 
 [project.scripts]
-version-manager = "versioning_tool.version_manager:main"
+vutil = "versioning_tool.version_manager:main"
 
 [tool.setuptools]
 packages = ["versioning_tool"]

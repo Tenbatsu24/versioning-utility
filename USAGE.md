@@ -6,26 +6,26 @@ A comprehensive tool for automated semantic versioning and changelog management.
 
 ```bash
 # Install in development mode
-pip install -e .
+pip install .
 
 # Or install directly
-pip install git+https://github.com/your-org/your-repo.git
+pip install git+https://github.com/Tenbatsu24/versioning-utility
 ```
 
 ## 🎯 Quick Start
 
 ```bash
 # Check what version would be applied
-python -m versioning_tool.version_manager check
+vutil check
 
 # Apply version bump and update files
-python -m versioning_tool.version_manager bump --yes
+vutil bump --yes
 
 # Update changelog only
-python -m versioning_tool.version_manager changelog
+vutil changelog
 
 # Update release graph in README
-python -m versioning_tool.version_manager graph
+vutil graph
 ```
 
 ## 🔧 Commands
@@ -35,7 +35,7 @@ python -m versioning_tool.version_manager graph
 Shows what the next version would be based on current changes.
 
 ```bash
-python -m versioning_tool.version_manager check
+vutil check
 ```
 
 **Output:**
@@ -55,10 +55,10 @@ Updates version in `pyproject.toml` and generates changelog.
 
 ```bash
 # Interactive mode (prompts for confirmation)
-python -m versioning_tool.version_manager bump
+vutil bump
 
 # Non-interactive mode (for CI)
-python -m versioning_tool.version_manager bump --yes
+vutil bump --yes
 ```
 
 **What it does:**
@@ -75,7 +75,7 @@ python -m versioning_tool.version_manager bump --yes
 Regenerates the changelog for the current version without changing the version.
 
 ```bash
-python -m versioning_tool.version_manager changelog
+vutil changelog
 ```
 
 **Use cases:**
@@ -89,18 +89,18 @@ Updates the Mermaid gitGraph section in the README.
 
 # Generate release-focused graph (default)
 ```bash
-python -m versioning_tool.version_manager graph
+vutil graph
 ```
 
 # Generate simple linear graph
 
 ```bash
-python -m versioning_tool.version_manager graph --type simple
+vutil graph --type simple
 ```
 
 # Generate detailed development graph
 ```bash
-python -m versioning_tool.version_manager graph --type detailed
+vutil graph --type detailed
 ```
 **Note:** Only works on main branch as configured
 
@@ -165,15 +165,6 @@ graph:
 repo_url: "https://github.com/your-org/your-repo"
 ```
 
-### Environment Variables
-
-```bash
-# Custom config file location
-export VERSIONING_CONFIG_PATH=/path/to/versioning.yaml
-
-# Override repository URL
-export REPO_URL=https://github.com/your-org/your-repo
-```
 
 ## 🎨 Customization
 
@@ -238,10 +229,13 @@ jobs:
         run: pip install -e .
 
       - name: Check version bump
-        run: python -m versioning_tool.version_manager check
+        run: vutil check
 ```
 
 ### Release Automation
+
+Here is an example workflow to automate releases on pushes to `main`.
+Only do this if you are confident in your own repo maintenance / release practices.
 
 ```yaml
 name: Release
@@ -261,7 +255,7 @@ jobs:
         run: pip install -e .
 
       - name: Bump version
-        run: python -m versioning_tool.version_manager bump --yes
+        run: vutil bump --yes
 
       - name: Create release
         uses: softprops/action-gh-release@v1
@@ -284,7 +278,7 @@ jobs:
 ### Q: How do I manually set a version?
 **A:** Edit `pyproject.toml` directly, then run:
 ```bash
-python -m versioning_tool.version_manager changelog
+vutil changelog
 ```
 
 ### Q: Can I use this with non-Python projects?
@@ -321,7 +315,7 @@ For detailed debugging, add debug prints to the tool or run with:
 
 ```bash
 # Enable Python debug output
-python -m versioning_tool.version_manager check 2>&1 | head -20
+vutil check 2>&1 | head -20
 ```
 
 ## 📚 Related Resources

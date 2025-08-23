@@ -3,7 +3,8 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Pre-commit Hooks](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://pre-commit.com/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)[![Semantic Versioning](https://img.shields.io/badge/semantic%20versioning-2.0.0-green.svg)](https://semver.org/)
 [![Semantic Versioning](https://img.shields.io/badge/semantic%20versioning-2.0.0-green.svg)](https://semver.org/)
 [![Conventional Commits](https://img.shields.io/badge/conventional%20commits-1.0.0-lightgrey.svg)](https://www.conventionalcommits.org/)
 
@@ -109,8 +110,15 @@ feature/* (alpha) → beta/* (beta) → rc/* (rc) → main (final release)
 **Notes:**
 
 * Pre-release types: `alpha` → `beta` → `rc`.
-* Version bumping is **automated by the utility**.
+* Version bumping is **not** automated by the utility (yet).
 * RC ensures stability after beta testing and before production.
+
+---
+
+## Release Workflow
+
+This section outlines the release workflow using the versioning tool and changelog generator.
+* [Release Workflow](RELEASE_WORKFLOW.md) for detailed steps on releasing new versions.
 
 ---
 
@@ -128,11 +136,6 @@ feature/* (alpha) → beta/* (beta) → rc/* (rc) → main (final release)
 * The utility can **auto-bump versions**, but manual bumps are allowed for final releases.
 
 ---
-## Release Workflow
-
-This section outlines the release workflow using the versioning tool and changelog generator.
-* [Release Workflow](RELEASE_WORKFLOW.md) for detailed steps on releasing new versions.
----
 
 This ensures every version bump includes a clear summary of changes.
 
@@ -142,3 +145,8 @@ This ensures every version bump includes a clear summary of changes.
 * Use feature branches (`feature/`) to keep changes organized.
 * Use pre-release branches (`beta/`, `rc/`) to test changes before merging into `main`.
 * Branch summaries help track which branch introduced which changes, useful for larger projects or multiple contributors.
+
+
+---
+## License
+This project is licensed under Apache 2.0 - see the [LICENSE](LICENSE) file for details.

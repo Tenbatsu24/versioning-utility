@@ -5,19 +5,22 @@ This document outlines the standardized release process for this project using t
 ## 📋 Overview
 
 The versioning tool automates semantic versioning based on:
+
 - Conventional commit messages
 - Branch naming patterns
 - Change impact analysis
 
 ## 🌿 Branch Strategy
 
-| Branch Pattern | Purpose | Version Bump | Prerelease Label |
-|----------------|---------|--------------|------------------|
-| `main` | Stable releases | Automatic | None |
-| `feature/*` | New features | Minor | `alpha` |
-| `hotfix/*` | Critical fixes | Patch | None |
-| `beta/*` | Beta testing | As needed | `beta` |
-| `rc/*` | Release candidates | As needed | `rc` |
+Here is an example branch strategy, which can be defined in `versioning.yaml`:
+
+| Branch Pattern | Purpose            | Version Bump | Prerelease Label |
+|----------------|--------------------|--------------|------------------|
+| `main`         | Stable releases    | Automatic    | None             |
+| `feature/*`    | New features       | Minor        | `alpha`          |
+| `hotfix/*`     | Critical fixes     | Patch        | None             |
+| `beta/*`       | Beta testing       | As needed    | `beta`           |
+| `rc/*`         | Release candidates | As needed    | `rc`             |
 
 ## 🚀 Release Process
 
@@ -41,7 +44,7 @@ git push origin feature/awesome-new-feature
 1. Create PR from `feature/*` to `main`
 2. CI automatically runs version check:
    ```bash
-   python -m versioning_tool.version_manager check
+   python -m vutil check
    ```
 3. Review suggested version bump in CI output
 4. Ensure all tests pass
@@ -65,13 +68,13 @@ git log --oneline -5
 
 ```bash
 # Check what version bump will be applied
-python -m versioning_tool.version_manager check
+vutil check
 
 # Apply the version bump (interactive)
-python -m versioning_tool.version_manager bump
+vutil bump
 
 # Or non-interactive for CI
-python -m versioning_tool.version_manager bump --yes
+vutil bump --yes
 
 # Review the changes
 git diff
@@ -106,7 +109,7 @@ git checkout main
 git pull origin main
 
 # Release hotfix
-python -m versioning_tool.version_manager bump --yes
+python -m vutil bump --yes
 git add pyproject.toml CHANGELOG.md README.md
 git commit -m "chore: release v1.2.1"
 git tag v1.2.1
@@ -116,19 +119,23 @@ git push origin main --tags
 ## 🏷️ Version Bump Rules
 
 ### Conventional Commits
+
 - `feat:` → **Minor** version bump (1.2.0 → 1.3.0)
 - `feat!:` → **Major** version bump (1.2.0 → 2.0.0) - Breaking change
 - `fix:` → **Patch** version bump (1.2.0 → 1.2.1)
 - `perf:`, `refactor:`, `build:`, `ci:` → **Patch** version bump
 
 ### Branch Overrides
+
 - `hotfix/*` → Always **patch** version bump
 - `feature/*` → **Minor** bump + `alpha` prerelease label when merged
 - `beta/*` → Current version + `beta` prerelease label
 - `rc/*` → Current version + `rc` prerelease label
 
 ### Ignored Changes
+
 The following **do not** trigger version bumps:
+
 - Documentation changes (`docs:` commits)
 - Chore updates (`chore:` commits)
 - Markdown file changes
@@ -170,7 +177,8 @@ ignore:
 
 ## ✅ Quality Gates
 
-Before releasing:
+Before releasing (these are not enforced by the tool, but recommended):
+
 - [ ] All tests pass
 - [ ] Documentation updated
 - [ ] Changelog preview looks correct
@@ -180,13 +188,16 @@ Before releasing:
 ## 🆘 Troubleshooting
 
 ### Version bump not suggested?
+
 - Check if changes are in ignored files/commits
 - Verify commit messages follow conventional format
 
 ### Wrong version suggested?
+
 - Check branch naming matches patterns
 - Review conventional commit messages
 
 ### Changelog not updating?
+
 - Ensure you're on the `main` branch
 - Check template file exists and is valid
