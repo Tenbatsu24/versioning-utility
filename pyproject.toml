@@ -1,5 +1,5 @@
 [project]
-name = "vutil"
+name = "semantic-versioning-utility"
 version = "0.3.4"
 description = "Automatic versioning and changelog generation utility."
 readme = "README.md"
