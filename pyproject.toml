@@ -1,6 +1,6 @@
 [project]
 name = "vutil"
-version = "0.3.2"
+version = "0.3.4"
 description = "Automatic versioning and changelog generation utility."
 readme = "README.md"
 requires-python = ">=3.11"
